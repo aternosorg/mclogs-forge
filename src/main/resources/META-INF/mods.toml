@@ -9,7 +9,7 @@ version="1.0.0"
 displayName="Mclogs"
 displayURL="https://mclo.gs/"
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="icon.png" #optional
+logoFile="logo.png" #optional
 authors="Julian Vennen" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
