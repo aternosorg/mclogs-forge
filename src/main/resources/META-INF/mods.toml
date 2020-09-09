@@ -1,0 +1,24 @@
+modLoader="javafml"
+loaderVersion="[31,)"
+# A URL to refer people to when problems occur with this mod
+#issueTrackerURL="http://my.issue.tracker/" #optional
+
+[[mods]] #mandatory
+modId="mclogs"
+version="1.0.0"
+displayName="Mclogs"
+displayURL="https://mclo.gs/"
+# A file name (in the root of the mod JAR) containing a logo for display
+logoFile="icon.png" #optional
+authors="Julian Vennen" #optional
+# The description text for the mod (multi line!) (#mandatory)
+description='''
+Easily share and analse your server logs!
+
+Commands:
+    /mclogs - shares your latest log
+    /mclogs list - lists all available log files
+    /mclogs share <filename> - shares a specific log
+
+All commands require a permission level of 2 or higher
+'''
