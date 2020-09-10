@@ -20,7 +20,6 @@ import java.io.IOException;
 @Mod("mclogs")
 public class MclogsForgeLoader {
     public static final Logger logger = LogManager.getLogger();
-    public static final String version = "1.0.0";
     public static String logsdir;
 
     public MclogsForgeLoader() {
@@ -51,7 +50,7 @@ public class MclogsForgeLoader {
                 source.sendFeedback(feedback, true);
                 return 1;
             } else {
-                logger.error("An error occurred when sharing your log");
+                logger.error("An error occurred when uploading your log");
                 logger.error(response.error);
                 StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details");
                 source.sendErrorMessage(error);
@@ -59,7 +58,7 @@ public class MclogsForgeLoader {
             }
         }
         catch (IOException e) {
-            logger.error("An error occurred when sharing your log");
+            logger.error("An error occurred when reading your log");
             logger.error(e);
             StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details");
             source.sendErrorMessage(error);

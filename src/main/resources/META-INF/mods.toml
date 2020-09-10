@@ -5,7 +5,7 @@ loaderVersion="[31,)"
 
 [[mods]] #mandatory
 modId="mclogs"
-version="1.0.0"
+version="1.0.1"
 displayName="Mclogs"
 displayURL="https://mclo.gs/"
 # A file name (in the root of the mod JAR) containing a logo for display
@@ -13,12 +13,12 @@ logoFile="logo.png" #optional
 authors="Julian Vennen" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Easily share and analse your server logs!
+Easily share and analyse your server logs!
 
 Commands:
-    /mclogs - shares your latest log
+    /mclogs - uploads your latest log
     /mclogs list - lists all available log files
-    /mclogs share <filename> - shares a specific log
+    /mclogs share <filename> - uploads a specific log
 
 All commands require a permission level of 2 or higher
 '''
