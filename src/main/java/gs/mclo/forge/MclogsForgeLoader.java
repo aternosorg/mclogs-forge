@@ -28,8 +28,12 @@ public class MclogsForgeLoader {
 
     @SubscribeEvent
     public void serverStarting(FMLServerStartingEvent event) {
-        logsdir = event.getServer().getFile("logs/latest.log").getAbsolutePath();
-        logsdir = logsdir.substring(0, logsdir.length() - 10);
+        try {
+            logsdir = event.getServer().getFile("logs").getCanonicalPath() + "/";
+        } catch (IOException e) {
+            logger.error("couldn't read logs directory");
+            logger.error(e);
+        }
         event.getCommandDispatcher().register(CommandMclogs.register());
         event.getCommandDispatcher().register(LiteralArgumentBuilder.<CommandSource>literal("mclogs")
             .then(CommandMclogsList.register())
