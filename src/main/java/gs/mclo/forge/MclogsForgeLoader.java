@@ -63,7 +63,7 @@ public class MclogsForgeLoader {
             }
         }
         catch (FileNotFoundException e) {
-            StringTextComponent error = new StringTextComponent("The log file "+filename+"doesnt exist. Use '/mclogs list' to list all commands");
+            StringTextComponent error = new StringTextComponent("The log file "+filename+"doesnt exist. Use '/mclogs list' to list all logs.");
             source.sendErrorMessage(error);
             return -1;
         }
