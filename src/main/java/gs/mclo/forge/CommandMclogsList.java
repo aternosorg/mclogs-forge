@@ -36,9 +36,9 @@ public class CommandMclogsList {
                     return logs.length;
                 }
                 catch (Exception e) {
-                    MclogsForgeLoader.logger.error("An error occurred when listing your logs");
+                    MclogsForgeLoader.logger.error("An error occurred when listing your logs.");
                     MclogsForgeLoader.logger.error(e);
-                    StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details");
+                    StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details.");
                     source.sendErrorMessage(error);
                     return -1;
                 }

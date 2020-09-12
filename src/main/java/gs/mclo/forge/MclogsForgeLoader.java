@@ -34,6 +34,7 @@ public class MclogsForgeLoader {
         } catch (IOException e) {
             logger.error("couldn't read logs directory");
             logger.error(e);
+            return;
         }
         event.getCommandDispatcher().register(CommandMclogs.register());
         event.getCommandDispatcher().register(LiteralArgumentBuilder.<CommandSource>literal("mclogs")
@@ -63,14 +64,14 @@ public class MclogsForgeLoader {
             }
         }
         catch (FileNotFoundException e) {
-            StringTextComponent error = new StringTextComponent("The log file "+filename+"doesnt exist. Use '/mclogs list' to list all logs.");
+            StringTextComponent error = new StringTextComponent("The log file "+filename+" doesn't exist. Use '/mclogs list' to list all logs.");
             source.sendErrorMessage(error);
             return -1;
         }
         catch (IOException e) {
-            logger.error("An error occurred when reading your log");
+            logger.error("An error occurred when reading your log.");
             logger.error(e);
-            StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details");
+            StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details.");
             source.sendErrorMessage(error);
             return -1;
         }
