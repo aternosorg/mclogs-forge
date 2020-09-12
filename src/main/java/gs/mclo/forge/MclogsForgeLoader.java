@@ -15,6 +15,7 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Mod("mclogs")
@@ -60,6 +61,11 @@ public class MclogsForgeLoader {
                 source.sendErrorMessage(error);
                 return -1;
             }
+        }
+        catch (FileNotFoundException e) {
+            StringTextComponent error = new StringTextComponent("The log file "+filename+"doesnt exist. Use '/mclogs list' to list all commands");
+            source.sendErrorMessage(error);
+            return -1;
         }
         catch (IOException e) {
             logger.error("An error occurred when reading your log");
