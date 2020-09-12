@@ -19,6 +19,11 @@ public class CommandMclogsList {
                 try {
                     String[] logs = MclogsAPI.listLogs(source.getServer().getDataDirectory().getAbsolutePath());
 
+                    if (logs.length == 0) {
+                        source.sendFeedback(new StringTextComponent("No logs available!"), false);
+                        return 0;
+                    }
+
                     StringTextComponent feedback = new StringTextComponent("Available Logs:");
                     for (String log : logs) {
                         Style s = new Style();
