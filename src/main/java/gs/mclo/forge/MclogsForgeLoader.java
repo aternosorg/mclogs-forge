@@ -49,12 +49,12 @@ public class MclogsForgeLoader {
             APIResponse response = MclogsAPI.share(MclogsForgeLoader.logsdir + filename);
 
             if (response.success) {
-                Style s = new Style();
-                s = s.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,response.url));
-                s = s.setColor(TextFormatting.GREEN);
-                TextComponentString feedback = new TextComponentString("Click here for your log");
+                Style s = new Style().setColor(TextFormatting.GREEN);
+                TextComponentString feedback = new TextComponentString("Your log has been uploaded: ");
                 feedback.setStyle(s);
-                source.sendFeedback(feedback, true);
+                TextComponentString link = new TextComponentString(response.url);
+                link.setStyle(new Style().setColor(TextFormatting.BLUE).setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,response.url)));
+                source.sendFeedback(feedback.appendSibling(link), true);
                 return 1;
             } else {
                 logger.error("An error occurred when uploading your log");
