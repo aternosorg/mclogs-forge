@@ -4,9 +4,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import gs.mclo.mclogs.APIResponse;
 import gs.mclo.mclogs.MclogsAPI;
 import net.minecraft.command.CommandSource;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -52,27 +51,27 @@ public class MclogsForgeLoader {
                 Style s = new Style();
                 s = s.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,response.url));
                 s = s.setColor(TextFormatting.GREEN);
-                TextComponentString feedback = new TextComponentString("Click here for your log");
+                StringTextComponent feedback = new StringTextComponent("Click here for your log");
                 feedback.setStyle(s);
                 source.sendFeedback(feedback, true);
                 return 1;
             } else {
                 logger.error("An error occurred when uploading your log");
                 logger.error(response.error);
-                TextComponentString error = new TextComponentString("An error occurred. Check your log for more details");
+                StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details");
                 source.sendErrorMessage(error);
                 return -1;
             }
         }
         catch (FileNotFoundException e) {
-            TextComponentString error = new TextComponentString("The log file "+filename+" doesn't exist. Use '/mclogs list' to list all logs.");
+            StringTextComponent error = new StringTextComponent("The log file "+filename+" doesn't exist. Use '/mclogs list' to list all logs.");
             source.sendErrorMessage(error);
             return -1;
         }
         catch (IOException e) {
             logger.error("An error occurred when reading your log.");
             logger.error(e);
-            TextComponentString error = new TextComponentString("An error occurred. Check your log for more details.");
+            StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details.");
             source.sendErrorMessage(error);
             return -1;
         }
