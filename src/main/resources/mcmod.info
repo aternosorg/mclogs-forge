@@ -1,0 +1,11 @@
+[
+{
+  "modid": "mclogs",
+  "name": "Mclogs",
+  "description": "Easily share and analyse your server logs!",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://mclo.gs"
+  "authorList": ["Julian Vennen"]
+}
+]

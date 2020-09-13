@@ -1,47 +1,43 @@
 package gs.mclo.forge;
 
-import com.mojang.brigadier.builder.ArgumentBuilder;
 import gs.mclo.mclogs.MclogsAPI;
-import net.minecraft.command.CommandSource;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 
-import static net.minecraft.command.Commands.literal;
-
 public class CommandMclogsList {
-    static ArgumentBuilder<CommandSource, ?> register() {
-        return literal("list")
-            .requires(source -> source.hasPermissionLevel(2))
-            .executes((context) -> {
-                CommandSource source = context.getSource();
 
-                try {
-                    String[] logs = MclogsAPI.listLogs(source.getServer().getDataDirectory().getAbsolutePath());
+    public static void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+        try {
+            String[] logs = MclogsAPI.listLogs(server.getDataDirectory().getAbsolutePath());
 
-                    if (logs.length == 0) {
-                        source.sendFeedback(new TextComponentString("No logs available!"), false);
-                        return 0;
-                    }
+            if (logs.length == 0) {
+                sender.sendMessage(new TextComponentString("No logs available!"));
+                return;
+            }
 
-                    TextComponentString feedback = new TextComponentString("Available Logs:");
-                    for (String log : logs) {
-                        Style s = new Style();
-                        s = s.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/mclogs share " + log));
-                        TextComponentString tempText = new TextComponentString("\n" + log);
-                        tempText.setStyle(s);
-                        feedback.appendSibling(tempText);
-                    }
-                    source.sendFeedback(feedback, false);
-                    return logs.length;
-                }
-                catch (Exception e) {
-                    MclogsForgeLoader.logger.error("An error occurred when listing your logs.");
-                    MclogsForgeLoader.logger.error(e);
-                    TextComponentString error = new TextComponentString("An error occurred. Check your log for more details.");
-                    source.sendErrorMessage(error);
-                    return -1;
-                }
-            });
+            TextComponentString feedback = new TextComponentString("Available Logs:");
+            for (String log : logs) {
+                Style s = new Style();
+                s = s.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/mclogs share " + log));
+                TextComponentString tempText = new TextComponentString("\n" + log);
+                tempText.setStyle(s);
+                feedback.appendSibling(tempText);
+            }
+            sender.sendMessage(feedback);
+            return;
+        }
+        catch (Exception e) {
+            MclogsForgeLoader.logger.error("An error occurred when listing your logs.");
+            MclogsForgeLoader.logger.error(e);
+            TextComponentString error = new TextComponentString("An error occurred. Check your log for more details.");
+            error.setStyle(new Style().setColor(TextFormatting.RED));
+            sender.sendMessage(error);
+            return;
+        }
     }
 }

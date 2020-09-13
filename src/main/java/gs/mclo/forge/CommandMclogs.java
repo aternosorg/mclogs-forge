@@ -1,16 +1,9 @@
 package gs.mclo.forge;
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.command.ICommandSender;
 
-import net.minecraft.command.CommandSource;
-
-
-import static net.minecraft.command.Commands.literal;
-
-public class CommandMclogs{
-    static LiteralArgumentBuilder<CommandSource> register() {
-        return literal("mclogs")
-                .requires(source -> source.hasPermissionLevel(2))
-                .executes((context) -> MclogsForgeLoader.share(context.getSource(), "latest.log"));
+public class CommandMclogs {
+    public static void execute(ICommandSender sender) {
+        MclogsForgeLoader.share(sender, "latest.log");
     }
 }

@@ -1,17 +1,18 @@
 package gs.mclo.forge;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.ArgumentBuilder;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-
-import static net.minecraft.command.Commands.literal;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 
 public class CommandMclogsShare {
-    static ArgumentBuilder<CommandSource, ?> register() {
-        return literal("share")
-            .requires(source -> source.hasPermissionLevel(2))
-            .then(Commands.argument("filename", StringArgumentType.greedyString())
-            .executes(context ->  MclogsForgeLoader.share(context.getSource(), context.getArgument("filename",String.class))));
+    public static void execute(ICommandSender sender, String[] args) {
+        if (args.length < 1) {
+            TextComponentString error = new TextComponentString(MclogsCommandHandler.usage);
+            error.setStyle(new Style().setColor(TextFormatting.RED));
+            sender.sendMessage(error);
+            return;
+        }
+        MclogsForgeLoader.share(sender, args[1]);
     }
 }
