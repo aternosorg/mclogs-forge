@@ -3,7 +3,7 @@ package gs.mclo.forge;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import gs.mclo.mclogs.MclogsAPI;
 import net.minecraft.command.CommandSource;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.event.ClickEvent;
 
@@ -20,15 +20,15 @@ public class CommandMclogsList {
                     String[] logs = MclogsAPI.listLogs(source.getServer().getDataDirectory().getAbsolutePath());
 
                     if (logs.length == 0) {
-                        source.sendFeedback(new StringTextComponent("No logs available!"), false);
+                        source.sendFeedback(new TextComponentString("No logs available!"), false);
                         return 0;
                     }
 
-                    StringTextComponent feedback = new StringTextComponent("Available Logs:");
+                    TextComponentString feedback = new TextComponentString("Available Logs:");
                     for (String log : logs) {
                         Style s = new Style();
                         s = s.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/mclogs share " + log));
-                        StringTextComponent tempText = new StringTextComponent("\n" + log);
+                        TextComponentString tempText = new TextComponentString("\n" + log);
                         tempText.setStyle(s);
                         feedback.appendSibling(tempText);
                     }
@@ -38,7 +38,7 @@ public class CommandMclogsList {
                 catch (Exception e) {
                     MclogsForgeLoader.logger.error("An error occurred when listing your logs.");
                     MclogsForgeLoader.logger.error(e);
-                    StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details.");
+                    TextComponentString error = new TextComponentString("An error occurred. Check your log for more details.");
                     source.sendErrorMessage(error);
                     return -1;
                 }
