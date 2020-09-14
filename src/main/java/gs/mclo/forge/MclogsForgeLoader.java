@@ -29,6 +29,10 @@ public class MclogsForgeLoader {
 
     @SubscribeEvent
     public void serverStarting(FMLServerStartingEvent event) {
+        MclogsAPI.mcversion = event.getServer().getMinecraftVersion();
+        MclogsAPI.userAgent = "Mclogs-forge";
+        MclogsAPI.version = "1.0.4";
+
         try {
             logsdir = event.getServer().getFile("logs").getCanonicalPath() + "/";
         } catch (IOException e) {
