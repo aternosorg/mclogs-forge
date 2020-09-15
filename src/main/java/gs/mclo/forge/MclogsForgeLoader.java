@@ -11,6 +11,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
@@ -19,8 +20,9 @@ import org.apache.logging.log4j.Logger;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-@Mod("mclogs")
-public class MclogsForgeLoader {
+@Mod(MclogsForgeLoader.modid)
+public class MclogsForgeLoader{
+    public static final String modid = "mclogs";
     public static final Logger logger = LogManager.getLogger();
     public static String logsdir;
 
@@ -30,6 +32,10 @@ public class MclogsForgeLoader {
 
     @SubscribeEvent
     public void serverStarting(FMLServerStartingEvent event) {
+        MclogsAPI.mcversion = event.getServer().getMinecraftVersion();
+        MclogsAPI.userAgent = "Mclogs-forge";
+        MclogsAPI.version = ModList.get().getModContainerById(MclogsForgeLoader.modid).get().getModInfo().getVersion().toString();
+
         try {
             logsdir = event.getServer().getFile("logs").getCanonicalPath() + "/";
         } catch (IOException e) {

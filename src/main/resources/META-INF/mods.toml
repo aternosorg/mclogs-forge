@@ -6,7 +6,7 @@ license="MIT"
 
 [[mods]] #mandatory
 modId="mclogs"
-version="1.0.3"
+version="1.0.4"
 displayName="Mclogs"
 displayURL="https://mclo.gs/"
 # A file name (in the root of the mod JAR) containing a logo for display
