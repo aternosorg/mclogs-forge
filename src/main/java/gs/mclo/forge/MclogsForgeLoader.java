@@ -8,9 +8,7 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ModContainerFactory;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.relauncher.libraries.ModList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,7 +19,7 @@ import java.io.IOException;
 public class MclogsForgeLoader{
     public static final String modid = "mclogs";
     public static final String name = "Mclogs";
-    public static final String version = "1.0.5";
+    public static final String version = "1.0.6";
     public static final Logger logger = LogManager.getLogger();
     public static String logsdir;
 
