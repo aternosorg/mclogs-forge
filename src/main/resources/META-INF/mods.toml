@@ -1,18 +1,15 @@
 modLoader="javafml"
 loaderVersion="[25,26)"
 license="MIT"
-# A URL to refer people to when problems occur with this mod
-#issueTrackerURL="http://my.issue.tracker/" #optional
+issueTrackerURL="https://github.com/aternosorg/mclogs-forge/issues"
 
-[[mods]] #mandatory
+[[mods]]
 modId="mclogs"
-version="1.0.5"
+version="1.0.6"
 displayName="Mclogs"
 displayURL="https://mclo.gs/"
-# A file name (in the root of the mod JAR) containing a logo for display
-logoFile="logo.png" #optional
-authors="Julian Vennen" #optional
-# The description text for the mod (multi line!) (#mandatory)
+logoFile="logo.png"
+authors="Julian Vennen"
 description='''
 Easily share and analyse your server logs!
 
