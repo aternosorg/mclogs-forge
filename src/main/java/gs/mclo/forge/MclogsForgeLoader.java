@@ -50,6 +50,7 @@ public class MclogsForgeLoader{
     }
 
     public static int share(CommandSource source, String filename){
+        logger.info("Sharing " + filename);
         try {
             APIResponse response = MclogsAPI.share(MclogsForgeLoader.logsdir + filename);
 
@@ -62,7 +63,7 @@ public class MclogsForgeLoader{
                 source.sendFeedback(feedback.appendSibling(link), true);
                 return 1;
             } else {
-                logger.error("An error occurred when uploading your log");
+                logger.error("An error occurred when uploading your log", response.error);
                 logger.error(response.error);
                 StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details");
                 source.sendErrorMessage(error);
