@@ -26,11 +26,10 @@ public class CommandMclogsList {
 
                     StringTextComponent feedback = new StringTextComponent("Available Logs:");
                     for (String log : logs) {
-                        Style s = new Style();
-                        s = s.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/mclogs share " + log));
+                        Style s = Style.EMPTY.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/mclogs share " + log));
                         StringTextComponent tempText = new StringTextComponent("\n" + log);
                         tempText.setStyle(s);
-                        feedback.appendSibling(tempText);
+                        feedback.append(tempText);
                     }
                     source.sendFeedback(feedback, false);
                     return logs.length;

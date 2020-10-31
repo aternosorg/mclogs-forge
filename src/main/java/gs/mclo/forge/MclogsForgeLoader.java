@@ -1,5 +1,6 @@
 package gs.mclo.forge;
 
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import gs.mclo.mclogs.APIResponse;
 import gs.mclo.mclogs.MclogsAPI;
@@ -42,8 +43,9 @@ public class MclogsForgeLoader{
             logger.error(e);
             return;
         }
-        event.getCommandDispatcher().register(CommandMclogs.register());
-        event.getCommandDispatcher().register(LiteralArgumentBuilder.<CommandSource>literal("mclogs")
+        CommandDispatcher<CommandSource> dispatcher = event.getServer().getCommandManager().getDispatcher();
+        dispatcher.register(CommandMclogs.register());
+        dispatcher.register(LiteralArgumentBuilder.<CommandSource>literal("mclogs")
             .then(CommandMclogsList.register())
             .then(CommandMclogsShare.register())
         );
@@ -55,15 +57,15 @@ public class MclogsForgeLoader{
             APIResponse response = MclogsAPI.share(MclogsForgeLoader.logsdir + filename);
 
             if (response.success) {
-                Style s = new Style().setColor(TextFormatting.GREEN);
+                Style s = Style.EMPTY.setFormatting(TextFormatting.GREEN);
                 StringTextComponent feedback = new StringTextComponent("Your log has been uploaded: ");
                 feedback.setStyle(s);
                 StringTextComponent link = new StringTextComponent(response.url);
-                link.setStyle(new Style().setColor(TextFormatting.BLUE).setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,response.url)));
-                source.sendFeedback(feedback.appendSibling(link), true);
+                link.setStyle(Style.EMPTY.setFormatting(TextFormatting.BLUE).setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,response.url)));
+                source.sendFeedback(feedback.append(link), true);
                 return 1;
             } else {
-                logger.error("An error occurred when uploading your log", response.error);
+                logger.error("An error occurred when uploading your log");
                 logger.error(response.error);
                 StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details");
                 source.sendErrorMessage(error);
