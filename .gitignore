@@ -2,5 +2,6 @@
 /Mclogs-plugin.iml
 /run/
 /out/
+/logs/
 build
 .gradle
