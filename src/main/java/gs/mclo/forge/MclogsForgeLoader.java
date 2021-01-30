@@ -2,8 +2,8 @@ package gs.mclo.forge;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import gs.mclo.java.APIResponse;
-import gs.mclo.java.MclogsAPI;
+import gs.mclo.mclogs.APIResponse;
+import gs.mclo.mclogs.MclogsAPI;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
