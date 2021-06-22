@@ -1,7 +1,7 @@
 package gs.mclo.forge;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
-import gs.mclo.mclogs.MclogsAPI;
+import gs.mclo.java.MclogsAPI;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
