@@ -1,8 +1,9 @@
 package gs.mclo.forge;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import gs.mclo.mclogs.APIResponse;
-import gs.mclo.mclogs.MclogsAPI;
+import com.mojang.brigadier.context.CommandContext;
+import gs.mclo.java.APIResponse;
+import gs.mclo.java.MclogsAPI;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
@@ -29,6 +30,15 @@ public class MclogsForgeLoader{
         MinecraftForge.EVENT_BUS.register(this);
     }
 
+    /**
+     * @param context command context
+     * @return log files
+     * @throws IOException io exception
+     */
+    public static String[] getLogs(CommandContext<CommandSource> context) throws IOException {
+        return MclogsAPI.listLogs(logsdir);
+    }
+
     @SubscribeEvent
     public void serverStarting(FMLServerStartingEvent event) {
         MclogsAPI.mcversion = event.getServer().getMinecraftVersion();
@@ -52,7 +62,7 @@ public class MclogsForgeLoader{
     public static int share(CommandSource source, String filename){
         logger.info("Sharing " + filename);
         try {
-            APIResponse response = MclogsAPI.share(MclogsForgeLoader.logsdir + filename);
+            APIResponse response = MclogsAPI.share(logsdir, filename);
 
             if (response.success) {
                 Style s = new Style().setColor(TextFormatting.GREEN);
@@ -63,8 +73,7 @@ public class MclogsForgeLoader{
                 source.sendFeedback(feedback.appendSibling(link), true);
                 return 1;
             } else {
-                logger.error("An error occurred when uploading your log", response.error);
-                logger.error(response.error);
+                logger.error("An error occurred when uploading your log: " + response.error);
                 StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details");
                 source.sendErrorMessage(error);
                 return -1;
