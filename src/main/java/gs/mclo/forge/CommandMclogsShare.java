@@ -19,7 +19,7 @@ import static net.minecraft.command.Commands.literal;
 public class CommandMclogsShare {
     static ArgumentBuilder<CommandSource, ?> register() {
         return literal("share")
-            .requires(source -> source.hasPermissionLevel(2))
+            .requires(source -> source.hasPermission(2))
             .then(Commands.argument("filename", StringArgumentType.greedyString())
             .suggests(CommandMclogsShare::suggest)
             .executes(context ->  MclogsForgeLoader.share(context.getSource(), context.getArgument("filename",String.class))));

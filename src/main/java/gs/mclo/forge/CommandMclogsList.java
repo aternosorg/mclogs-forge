@@ -12,33 +12,33 @@ import static net.minecraft.command.Commands.literal;
 public class CommandMclogsList {
     static ArgumentBuilder<CommandSource, ?> register() {
         return literal("list")
-            .requires(source -> source.hasPermissionLevel(2))
+            .requires(source -> source.hasPermission(2))
             .executes((context) -> {
                 CommandSource source = context.getSource();
 
                 try {
-                    String[] logs = MclogsAPI.listLogs(source.getServer().getDataDirectory().getAbsolutePath());
+                    String[] logs = MclogsAPI.listLogs(source.getServer().getServerDirectory().getAbsolutePath());
 
                     if (logs.length == 0) {
-                        source.sendFeedback(new StringTextComponent("No logs available!"), false);
+                        source.sendSuccess(new StringTextComponent("No logs available!"), false);
                         return 0;
                     }
 
                     StringTextComponent feedback = new StringTextComponent("Available Logs:");
                     for (String log : logs) {
-                        Style s = Style.EMPTY.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/mclogs share " + log));
+                        Style s = Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/mclogs share " + log));
                         StringTextComponent tempText = new StringTextComponent("\n" + log);
                         tempText.setStyle(s);
                         feedback.append(tempText);
                     }
-                    source.sendFeedback(feedback, false);
+                    source.sendSuccess(feedback, false);
                     return logs.length;
                 }
                 catch (Exception e) {
                     MclogsForgeLoader.logger.error("An error occurred when listing your logs.");
                     MclogsForgeLoader.logger.error(e);
                     StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details.");
-                    source.sendErrorMessage(error);
+                    source.sendFailure(error);
                     return -1;
                 }
             });
