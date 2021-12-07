@@ -1,6 +1,6 @@
 package gs.mclo.forge;
 
-import gs.mclo.mclogs.MclogsAPI;
+import gs.mclo.java.MclogsAPI;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -29,7 +29,6 @@ public class CommandMclogsList {
                 feedback.appendSibling(tempText);
             }
             sender.sendMessage(feedback);
-            return;
         }
         catch (Exception e) {
             MclogsForgeLoader.logger.error("An error occurred when listing your logs.");
@@ -37,7 +36,6 @@ public class CommandMclogsList {
             TextComponentString error = new TextComponentString("An error occurred. Check your log for more details.");
             error.setStyle(new Style().setColor(TextFormatting.RED));
             sender.sendMessage(error);
-            return;
         }
     }
 }

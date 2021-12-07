@@ -1,7 +1,7 @@
 package gs.mclo.forge;
 
-import gs.mclo.mclogs.APIResponse;
-import gs.mclo.mclogs.MclogsAPI;
+import gs.mclo.java.APIResponse;
+import gs.mclo.java.MclogsAPI;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.Style;
@@ -14,6 +14,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Mod(modid = MclogsForgeLoader.modid, name = MclogsForgeLoader.name, version = MclogsForgeLoader.version)
 public class MclogsForgeLoader{
@@ -42,7 +44,12 @@ public class MclogsForgeLoader{
     public static int share(ICommandSender source, String filename){
         logger.info("Sharing " + filename);
         try {
-            APIResponse response = MclogsAPI.share(MclogsForgeLoader.logsdir + filename);
+            Path logs = Paths.get(logsdir);
+            Path log = logs.resolve(filename);
+            if (!log.getParent().equals(logs)) {
+                throw new FileNotFoundException();
+            }
+            APIResponse response = MclogsAPI.share(log);
 
             if (response.success) {
                 Style s = new Style().setColor(TextFormatting.GREEN);
@@ -53,7 +60,7 @@ public class MclogsForgeLoader{
                 source.sendMessage(feedback.appendSibling(link));
                 return 1;
             } else {
-                logger.error("An error occurred when uploading your log", response.error);
+                logger.error("An error occurred when uploading your log: " + response.error);
                 logger.error(response.error);
                 TextComponentString error = new TextComponentString("An error occurred. Check your log for more details");
                 error.setStyle(new Style().setColor(TextFormatting.RED));
