@@ -2,19 +2,18 @@ package gs.mclo.forge;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.context.CommandContext;
 import gs.mclo.java.APIResponse;
 import gs.mclo.java.MclogsAPI;
-import net.minecraft.command.CommandSource;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,16 +33,15 @@ public class MclogsForgeLoader{
     }
 
     /**
-     * @param context command context
      * @return log files
      * @throws IOException io exception
      */
-    public static String[] getLogs(CommandContext<CommandSource> context) throws IOException {
+    public static String[] getLogs() throws IOException {
         return MclogsAPI.listLogs(logsdir);
     }
 
     @SubscribeEvent
-    public void serverStarting(FMLServerStartingEvent event) {
+    public void serverStarting(ServerStartingEvent event) {
         MclogsAPI.mcversion = event.getServer().getServerVersion();
         MclogsAPI.userAgent = "Mclogs-forge";
         MclogsAPI.version = ModList.get().getModContainerById(MclogsForgeLoader.modid).get().getModInfo().getVersion().toString();
@@ -55,15 +53,15 @@ public class MclogsForgeLoader{
             logger.error(e);
             return;
         }
-        CommandDispatcher<CommandSource> dispatcher = event.getServer().getCommands().getDispatcher();
+        CommandDispatcher<CommandSourceStack> dispatcher = event.getServer().getCommands().getDispatcher();
         dispatcher.register(CommandMclogs.register());
-        dispatcher.register(LiteralArgumentBuilder.<CommandSource>literal("mclogs")
+        dispatcher.register(LiteralArgumentBuilder.<CommandSourceStack>literal("mclogs")
             .then(CommandMclogsList.register())
             .then(CommandMclogsShare.register())
         );
     }
 
-    public static int share(CommandSource source, String filename){
+    public static int share(CommandSourceStack source, String filename){
         logger.info("Sharing " + filename);
         try {
             Path logs = Paths.get(logsdir);
@@ -74,29 +72,29 @@ public class MclogsForgeLoader{
             APIResponse response = MclogsAPI.share(log);
 
             if (response.success) {
-                Style s = Style.EMPTY.withColor(TextFormatting.GREEN);
-                StringTextComponent feedback = new StringTextComponent("Your log has been uploaded: ");
+                Style s = Style.EMPTY.withColor(ChatFormatting.GREEN);
+                TextComponent feedback = new TextComponent("Your log has been uploaded: ");
                 feedback.setStyle(s);
-                StringTextComponent link = new StringTextComponent(response.url);
-                link.setStyle(Style.EMPTY.withColor(TextFormatting.BLUE).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,response.url)));
+                TextComponent link = new TextComponent(response.url);
+                link.setStyle(Style.EMPTY.withColor(ChatFormatting.BLUE).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,response.url)));
                 source.sendSuccess(feedback.append(link), true);
                 return 1;
             } else {
                 logger.error("An error occurred when uploading your log: " + response.error);
-                StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details");
+                TextComponent error = new TextComponent("An error occurred. Check your log for more details");
                 source.sendFailure(error);
                 return -1;
             }
         }
         catch (FileNotFoundException|IllegalArgumentException e) {
-            StringTextComponent error = new StringTextComponent("The log file "+filename+" doesn't exist. Use '/mclogs list' to list all logs.");
+            TextComponent error = new TextComponent("The log file "+filename+" doesn't exist. Use '/mclogs list' to list all logs.");
             source.sendFailure(error);
             return -1;
         }
         catch (IOException e) {
             logger.error("An error occurred when reading your log.");
             logger.error(e);
-            StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details.");
+            TextComponent error = new TextComponent("An error occurred. Check your log for more details.");
             source.sendFailure(error);
             return -1;
         }
