@@ -2,8 +2,9 @@ package gs.mclo.forge;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import gs.mclo.mclogs.APIResponse;
-import gs.mclo.mclogs.MclogsAPI;
+import com.mojang.brigadier.context.CommandContext;
+import gs.mclo.java.APIResponse;
+import gs.mclo.java.MclogsAPI;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
@@ -19,6 +20,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Mod(MclogsForgeLoader.modid)
 public class MclogsForgeLoader{
@@ -28,6 +31,15 @@ public class MclogsForgeLoader{
 
     public MclogsForgeLoader() {
         MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    /**
+     * @param context command context
+     * @return log files
+     * @throws IOException io exception
+     */
+    public static String[] getLogs(CommandContext<CommandSource> context) throws IOException {
+        return MclogsAPI.listLogs(logsdir);
     }
 
     @SubscribeEvent
@@ -54,7 +66,12 @@ public class MclogsForgeLoader{
     public static int share(CommandSource source, String filename){
         logger.info("Sharing " + filename);
         try {
-            APIResponse response = MclogsAPI.share(MclogsForgeLoader.logsdir + filename);
+            Path logs = Paths.get(logsdir);
+            Path log = logs.resolve(filename);
+            if (!log.getParent().equals(logs)) {
+                throw new FileNotFoundException();
+            }
+            APIResponse response = MclogsAPI.share(log);
 
             if (response.success) {
                 Style s = Style.EMPTY.setFormatting(TextFormatting.GREEN);
@@ -65,14 +82,18 @@ public class MclogsForgeLoader{
                 source.sendFeedback(feedback.append(link), true);
                 return 1;
             } else {
+<<<<<<< HEAD
                 logger.error("An error occurred when uploading your log");
                 logger.error(response.error);
+=======
+                logger.error("An error occurred when uploading your log: " + response.error);
+>>>>>>> master
                 StringTextComponent error = new StringTextComponent("An error occurred. Check your log for more details");
                 source.sendErrorMessage(error);
                 return -1;
             }
         }
-        catch (FileNotFoundException e) {
+        catch (FileNotFoundException|IllegalArgumentException e) {
             StringTextComponent error = new StringTextComponent("The log file "+filename+" doesn't exist. Use '/mclogs list' to list all logs.");
             source.sendErrorMessage(error);
             return -1;
