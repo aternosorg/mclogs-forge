@@ -19,6 +19,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Mod(MclogsForgeLoader.modid)
 public class MclogsForgeLoader{
@@ -62,7 +64,12 @@ public class MclogsForgeLoader{
     public static int share(CommandSource source, String filename){
         logger.info("Sharing " + filename);
         try {
-            APIResponse response = MclogsAPI.share(logsdir, filename);
+            Path logs = Paths.get(logsdir);
+            Path log = logs.resolve(filename);
+            if (!log.getParent().equals(logs)) {
+                throw new FileNotFoundException();
+            }
+            APIResponse response = MclogsAPI.share(log);
 
             if (response.success) {
                 Style s = new Style().setColor(TextFormatting.GREEN);
@@ -79,7 +86,7 @@ public class MclogsForgeLoader{
                 return -1;
             }
         }
-        catch (FileNotFoundException e) {
+        catch (FileNotFoundException|IllegalArgumentException e) {
             StringTextComponent error = new StringTextComponent("The log file "+filename+" doesn't exist. Use '/mclogs list' to list all logs.");
             source.sendErrorMessage(error);
             return -1;
