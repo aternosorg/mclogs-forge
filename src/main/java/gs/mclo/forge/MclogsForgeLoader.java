@@ -7,8 +7,9 @@ import gs.mclo.java.MclogsAPI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -73,29 +74,26 @@ public class MclogsForgeLoader{
 
             if (response.success) {
                 Style s = Style.EMPTY.withColor(ChatFormatting.GREEN);
-                TextComponent feedback = new TextComponent("Your log has been uploaded: ");
+                MutableComponent feedback = Component.literal("Your log has been uploaded: ").copy();
                 feedback.setStyle(s);
-                TextComponent link = new TextComponent(response.url);
+                MutableComponent link = Component.literal(response.url);
                 link.setStyle(Style.EMPTY.withColor(ChatFormatting.BLUE).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,response.url)));
                 source.sendSuccess(feedback.append(link), true);
                 return 1;
             } else {
                 logger.error("An error occurred when uploading your log: " + response.error);
-                TextComponent error = new TextComponent("An error occurred. Check your log for more details");
-                source.sendFailure(error);
+                source.sendFailure(Component.literal("An error occurred. Check your log for more details"));
                 return -1;
             }
         }
         catch (FileNotFoundException|IllegalArgumentException e) {
-            TextComponent error = new TextComponent("The log file "+filename+" doesn't exist. Use '/mclogs list' to list all logs.");
-            source.sendFailure(error);
+            source.sendFailure(Component.literal("The log file "+filename+" doesn't exist. Use '/mclogs list' to list all logs."));
             return -1;
         }
         catch (IOException e) {
             logger.error("An error occurred when reading your log.");
-            logger.error(e);
-            TextComponent error = new TextComponent("An error occurred. Check your log for more details.");
-            source.sendFailure(error);
+            logger.error(e);;
+            source.sendFailure(Component.literal("An error occurred. Check your log for more details."));
             return -1;
         }
     }

@@ -5,8 +5,9 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import gs.mclo.java.MclogsAPI;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
 
 public class CommandMclogsList {
     static ArgumentBuilder<CommandSourceStack, ?> register() {
@@ -19,14 +20,14 @@ public class CommandMclogsList {
                     String[] logs = MclogsAPI.listLogs(source.getServer().getServerDirectory().getAbsolutePath());
 
                     if (logs.length == 0) {
-                        source.sendSuccess(new TextComponent("No logs available!"), false);
+                        source.sendSuccess(Component.literal("No logs available!"), false);
                         return 0;
                     }
 
-                    TextComponent feedback = new TextComponent("Available Logs:");
+                    MutableComponent feedback = Component.literal("Available Logs:");
                     for (String log : logs) {
                         Style s = Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/mclogs share " + log));
-                        TextComponent tempText = new TextComponent("\n" + log);
+                        MutableComponent tempText = Component.literal("\n" + log);
                         tempText.setStyle(s);
                         feedback.append(tempText);
                     }
@@ -36,8 +37,7 @@ public class CommandMclogsList {
                 catch (Exception e) {
                     MclogsForgeLoader.logger.error("An error occurred when listing your logs.");
                     MclogsForgeLoader.logger.error(e);
-                    TextComponent error = new TextComponent("An error occurred. Check your log for more details.");
-                    source.sendFailure(error);
+                    source.sendFailure(Component.literal("An error occurred. Check your log for more details."));
                     return -1;
                 }
             });
