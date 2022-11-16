@@ -5,8 +5,8 @@ with one simple command. It's even possible to export old server log files, e.g.
 like IP addresses are automatically hidden to ensure safety and privacy.
 
 ### Downloads
-- [GitHub Releases](https://github.com/aternosorg/mclogs-forgec/releases)
-- [CurseForge](https://www.curseforge.com/minecraft/mc-mods/mc-logs)
+- [GitHub Releases](https://github.com/aternosorg/mclogs-forge/releases)
+- [CurseForge](https://www.curseforge.com/minecraft/mc-mods/mclo-gs)
 - [Modrinth](https://modrinth.com/mod/mclogs)
 
 ### Commands

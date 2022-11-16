@@ -23,7 +23,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ./build/libs/mclogs-fabric-*.jar
+            ./build/libs/mclogs-forge-*.jar
           body_path: ${{ github.workspace }}/CHANGELOG.md
           name: v${{ github.ref_name }}
       - name: Publish to Modrinth
