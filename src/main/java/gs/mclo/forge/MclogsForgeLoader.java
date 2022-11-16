@@ -3,6 +3,7 @@ package gs.mclo.forge;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import gs.mclo.java.APIResponse;
+import gs.mclo.java.Log;
 import gs.mclo.java.MclogsAPI;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.text.StringTextComponent;
@@ -26,7 +27,6 @@ import java.nio.file.Paths;
 public class MclogsForgeLoader{
     public static final String modid = "mclogs";
     public static final Logger logger = LogManager.getLogger();
-    public static String logsdir;
 
     public MclogsForgeLoader() {
         MinecraftForge.EVENT_BUS.register(this);
@@ -38,7 +38,16 @@ public class MclogsForgeLoader{
      * @throws IOException io exception
      */
     public static String[] getLogs(CommandContext<CommandSource> context) throws IOException {
-        return MclogsAPI.listLogs(logsdir);
+        return MclogsAPI.listLogs(context.getSource().getServer().getDataDirectory().getAbsolutePath());
+    }
+
+    /**
+     * @param context command context
+     * @return crash reports
+     * @throws IOException io exception
+     */
+    public static String[] getCrashReports(CommandContext<CommandSource> context) throws IOException {
+        return MclogsAPI.listCrashReports(context.getSource().getServer().getDataDirectory().getAbsolutePath());
     }
 
     @SubscribeEvent
@@ -46,14 +55,6 @@ public class MclogsForgeLoader{
         MclogsAPI.mcversion = event.getServer().getMinecraftVersion();
         MclogsAPI.userAgent = "Mclogs-forge";
         MclogsAPI.version = ModList.get().getModContainerById(MclogsForgeLoader.modid).get().getModInfo().getVersion().toString();
-
-        try {
-            logsdir = event.getServer().getFile("logs").getCanonicalPath() + "/";
-        } catch (IOException e) {
-            logger.error("couldn't read logs directory");
-            logger.error(e);
-            return;
-        }
         event.getCommandDispatcher().register(CommandMclogs.register());
         event.getCommandDispatcher().register(LiteralArgumentBuilder.<CommandSource>literal("mclogs")
             .then(CommandMclogsList.register())
@@ -63,12 +64,33 @@ public class MclogsForgeLoader{
 
     public static int share(CommandSource source, String filename){
         logger.info("Sharing " + filename);
+        source.sendFeedback(new StringTextComponent("Sharing " + filename), false);
+
+        Path directory = source.getServer().getDataDirectory().toPath();
+        Path logs = directory.resolve("logs");
+        Path crashReports = directory.resolve("crash-reports");
+        Path log = directory.resolve("logs").resolve(filename);
+
+        if (!log.toFile().exists()) {
+            log = directory.resolve("crash-reports").resolve(filename);
+        }
+
+        boolean isInAllowedDirectory = false;
         try {
-            Path logs = Paths.get(logsdir);
-            Path log = logs.resolve(filename);
-            if (!log.getParent().equals(logs)) {
-                throw new FileNotFoundException();
-            }
+            Path logPath = log.toRealPath();
+            isInAllowedDirectory = (logs.toFile().exists() && logPath.startsWith(logs.toRealPath()))
+                    || (crashReports.toFile().exists() && logPath.startsWith(crashReports.toRealPath()));
+        }
+        catch (IOException ignored) {}
+
+        if (!log.toFile().exists() || !isInAllowedDirectory
+                || !log.getFileName().toString().matches(Log.ALLOWED_FILE_NAME_PATTERN.pattern())) {
+            source.sendErrorMessage(new StringTextComponent("There is no log or crash report with the name '"
+                    + filename + "'. Use '/mclogs list' to list all logs."));
+            return -1;
+        }
+
+        try {
             APIResponse response = MclogsAPI.share(log);
 
             if (response.success) {
@@ -85,11 +107,6 @@ public class MclogsForgeLoader{
                 source.sendErrorMessage(error);
                 return -1;
             }
-        }
-        catch (FileNotFoundException|IllegalArgumentException e) {
-            StringTextComponent error = new StringTextComponent("The log file "+filename+" doesn't exist. Use '/mclogs list' to list all logs.");
-            source.sendErrorMessage(error);
-            return -1;
         }
         catch (IOException e) {
             logger.error("An error occurred when reading your log.");
