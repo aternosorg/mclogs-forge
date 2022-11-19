@@ -1,2 +1,9 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { url = 'https://maven.minecraftforge.net/' }
+    }
+}
+
 include ':mclogs-java'
 project(':mclogs-java').projectDir = new File('./mclogs-java')
