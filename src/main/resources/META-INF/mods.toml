@@ -5,7 +5,7 @@ issueTrackerURL="https://github.com/aternosorg/mclogs-forge/issues"
 
 [[mods]]
 modId="mclogs"
-version="1.0.6"
+version="${file.jarVersion}"
 displayName="Mclogs"
 displayURL="https://mclo.gs/"
 logoFile="logo.png"
