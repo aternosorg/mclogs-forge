@@ -19,60 +19,41 @@ public class CommandMclogsList {
                 CommandSource source = context.getSource();
 
                 try {
-<<<<<<< HEAD
-                    String[] logs = MclogsAPI.listLogs(source.getServer().getServerDirectory().getAbsolutePath());
-
-                    if (logs.length == 0) {
-                        source.sendSuccess(new StringTextComponent("No logs available!"), false);
-                        return 0;
-                    }
-
-                    StringTextComponent feedback = new StringTextComponent("Available Logs:");
-                    for (String log : logs) {
-                        Style s = Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/mclogs share " + log));
-                        StringTextComponent tempText = new StringTextComponent("\n" + log);
-                        tempText.setStyle(s);
-                        feedback.append(tempText);
-                    }
-                    source.sendSuccess(feedback, false);
-                    return logs.length;
-=======
                     int total = 0;
                     StringTextComponent message = new StringTextComponent("");
 
-                    message.appendSibling(new StringTextComponent("Available logs:")
-                        .setStyle(new Style()
-                            .setColor(TextFormatting.GREEN)
-                            .setBold(true)
+                    message.append(new StringTextComponent("Available logs:")
+                        .setStyle(Style.EMPTY
+                            .withColor(TextFormatting.GREEN)
+                            .withBold(true)
                         ));
                     for (String log : MclogsForgeLoader.getLogs(context)) {
                         ITextComponent tempText = new StringTextComponent("\n" + log)
-                                .setStyle(new Style()
-                                .setClickEvent(
+                                .setStyle(Style.EMPTY
+                                .withClickEvent(
                                         new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/mclogs share " + log))
                                 );
-                        message.appendSibling(tempText);
+                        message.append(tempText);
                         total++;
                     }
 
-                    message.appendSibling(new StringTextComponent("\nAvailable crash reports:")
-                            .setStyle(new Style()
-                                    .setColor(TextFormatting.GREEN)
-                                    .setBold(true)
+                    message.append(new StringTextComponent("\nAvailable crash reports:")
+                            .setStyle(Style.EMPTY
+                                    .withColor(TextFormatting.GREEN)
+                                    .withBold(true)
                             ));
                     for (String report : MclogsForgeLoader.getCrashReports(context)) {
                         ITextComponent tempText = new StringTextComponent("\n" + report)
-                                .setStyle(new Style()
-                                        .setClickEvent(
+                                .setStyle(Style.EMPTY
+                                        .withClickEvent(
                                                 new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/mclogs share " + report))
                                 );
-                        message.appendSibling(tempText);
+                        message.append(tempText);
                         total++;
                     }
 
-                    source.sendFeedback(message, false);
+                    source.sendSuccess(message, false);
                     return total;
->>>>>>> master
                 }
                 catch (Exception e) {
                     MclogsForgeLoader.logger.error("An error occurred when listing your logs.");
