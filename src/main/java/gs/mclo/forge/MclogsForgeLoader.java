@@ -2,7 +2,9 @@ package gs.mclo.forge;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
 import gs.mclo.java.APIResponse;
+import gs.mclo.java.Log;
 import gs.mclo.java.MclogsAPI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -18,16 +20,13 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @Mod(MclogsForgeLoader.modid)
 public class MclogsForgeLoader{
     public static final String modid = "mclogs";
     public static final Logger logger = LogManager.getLogger();
-    public static String logsdir;
 
     public MclogsForgeLoader() {
         MinecraftForge.EVENT_BUS.register(this);
@@ -37,8 +36,17 @@ public class MclogsForgeLoader{
      * @return log files
      * @throws IOException io exception
      */
-    public static String[] getLogs() throws IOException {
-        return MclogsAPI.listLogs(logsdir);
+    public static String[] getLogs(CommandContext<CommandSourceStack> context) throws IOException {
+        return MclogsAPI.listLogs(context.getSource().getServer().getServerDirectory().getAbsolutePath());
+    }
+
+    /**
+     * @param context command context
+     * @return crash reports
+     * @throws IOException io exception
+     */
+    public static String[] getCrashReports(CommandContext<CommandSourceStack> context) throws IOException {
+        return MclogsAPI.listCrashReports(context.getSource().getServer().getServerDirectory().getAbsolutePath());
     }
 
     @SubscribeEvent
@@ -46,14 +54,6 @@ public class MclogsForgeLoader{
         MclogsAPI.mcversion = event.getServer().getServerVersion();
         MclogsAPI.userAgent = "Mclogs-forge";
         MclogsAPI.version = ModList.get().getModContainerById(MclogsForgeLoader.modid).get().getModInfo().getVersion().toString();
-
-        try {
-            logsdir = event.getServer().getFile("logs").getCanonicalPath() + "/";
-        } catch (IOException e) {
-            logger.error("couldn't read logs directory");
-            logger.error(e);
-            return;
-        }
         CommandDispatcher<CommandSourceStack> dispatcher = event.getServer().getCommands().getDispatcher();
         dispatcher.register(CommandMclogs.register());
         dispatcher.register(LiteralArgumentBuilder.<CommandSourceStack>literal("mclogs")
@@ -64,12 +64,33 @@ public class MclogsForgeLoader{
 
     public static int share(CommandSourceStack source, String filename){
         logger.info("Sharing " + filename);
+        source.sendSuccess(Component.literal("Sharing " + filename), false);
+
+        Path directory = source.getServer().getServerDirectory().toPath();
+        Path logs = directory.resolve("logs");
+        Path crashReports = directory.resolve("crash-reports");
+        Path log = directory.resolve("logs").resolve(filename);
+
+        if (!log.toFile().exists()) {
+            log = directory.resolve("crash-reports").resolve(filename);
+        }
+
+        boolean isInAllowedDirectory = false;
         try {
-            Path logs = Paths.get(logsdir);
-            Path log = logs.resolve(filename);
-            if (!log.getParent().equals(logs)) {
-                throw new FileNotFoundException();
-            }
+            Path logPath = log.toRealPath();
+            isInAllowedDirectory = (logs.toFile().exists() && logPath.startsWith(logs.toRealPath()))
+                    || (crashReports.toFile().exists() && logPath.startsWith(crashReports.toRealPath()));
+        }
+        catch (IOException ignored) {}
+
+        if (!log.toFile().exists() || !isInAllowedDirectory
+                || !log.getFileName().toString().matches(Log.ALLOWED_FILE_NAME_PATTERN.pattern())) {
+            source.sendFailure(Component.literal("There is no log or crash report with the name '"
+                    + filename + "'. Use '/mclogs list' to list all logs."));
+            return -1;
+        }
+
+        try {
             APIResponse response = MclogsAPI.share(log);
 
             if (response.success) {
@@ -86,13 +107,9 @@ public class MclogsForgeLoader{
                 return -1;
             }
         }
-        catch (FileNotFoundException|IllegalArgumentException e) {
-            source.sendFailure(Component.literal("The log file "+filename+" doesn't exist. Use '/mclogs list' to list all logs."));
-            return -1;
-        }
         catch (IOException e) {
             logger.error("An error occurred when reading your log.");
-            logger.error(e);;
+            logger.error(e);
             source.sendFailure(Component.literal("An error occurred. Check your log for more details."));
             return -1;
         }
