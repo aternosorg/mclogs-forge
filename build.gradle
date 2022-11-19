@@ -8,7 +8,7 @@ version = project.hasProperty('release') ? project.getProperty('release') : 'dev
 group = 'gs.mclogs.forge'
 archivesBaseName = 'mclogs-forge'
 changelog = rootProject.file("CHANGELOG.md").text
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 repositories {
     mavenCentral()
