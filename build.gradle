@@ -22,7 +22,9 @@ configurations {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.18.2-40.1.85'
 
-    include project(path: ":mclogs-java", configuration: 'default')
+    include(project(":mclogs-java")) {
+        exclude group: 'com.google.code.gson', module: 'gson'
+    }
 }
 
 minecraft {
