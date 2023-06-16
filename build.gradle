@@ -1,7 +1,7 @@
 plugins {
-    id 'net.minecraftforge.gradle' version '5.1.+'
-    id "com.modrinth.minotaur" version "2.+"
-    id "net.darkhax.curseforgegradle" version "1.0.11"
+    id 'net.minecraftforge.gradle' version '5.1.69' // DO NOT UPDATE, newer versions somehow break shading
+    id "com.modrinth.minotaur" version "2.8.1"
+    id "net.darkhax.curseforgegradle" version "1.1.15"
 }
 
 version = project.hasProperty('release') ? project.getProperty('release') : 'dev'
@@ -10,6 +10,7 @@ archivesBaseName = 'mclogs-forge'
 changelog = rootProject.file("CHANGELOG.md").text
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+
 repositories {
     mavenCentral()
 }
@@ -22,7 +23,7 @@ configurations {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.19.3-44.0.11'
 
-    include(project(":mclogs-java")) {
+    include("gs.mclo:api:4.0.1") {
         exclude group: 'com.google.code.gson', module: 'gson'
     }
 }
