@@ -68,7 +68,7 @@ public class MclogsForgeLoader{
 
     public static int share(CommandSourceStack source, String filename){
         logger.info("Sharing " + filename);
-        source.sendSuccess(Component.literal("Sharing " + filename), false);
+        source.sendSuccess(() -> Component.literal("Sharing " + filename), false);
 
         Path directory = source.getServer().getServerDirectory().toPath();
         Path logs = directory.resolve("logs");
@@ -104,7 +104,7 @@ public class MclogsForgeLoader{
                 feedback.setStyle(s);
                 MutableComponent link = Component.literal(response.getUrl());
                 link.setStyle(Style.EMPTY.withColor(ChatFormatting.BLUE).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,response.getUrl())));
-                source.sendSuccess(feedback.append(link), true);
+                source.sendSuccess(() -> feedback.append(link), true);
                 return 1;
             } else {
                 logger.error("An error occurred when uploading your log: " + response.getError());

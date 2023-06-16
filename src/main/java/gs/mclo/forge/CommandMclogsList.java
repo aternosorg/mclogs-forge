@@ -50,7 +50,7 @@ public class CommandMclogsList {
                         total++;
                     }
 
-                    source.sendSuccess(message, false);
+                    source.sendSuccess(() -> message, false);
                     return total;
                 }
                 catch (Exception e) {
