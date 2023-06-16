@@ -97,6 +97,7 @@ public class MclogsForgeLoader{
 
         try {
             UploadLogResponse response = client.uploadLog(log).get();
+            response.setClient(client);
 
             if (response.isSuccess()) {
                 Style s = Style.EMPTY.withColor(TextFormatting.GREEN);

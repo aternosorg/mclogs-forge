@@ -1,8 +1,7 @@
 plugins {
-    id 'net.minecraftforge.gradle' version '6.0.6'
+    id 'net.minecraftforge.gradle' version '5.1.69' // DO NOT UPDATE, newer versions somehow break shading
     id "com.modrinth.minotaur" version "2.8.1"
     id "net.darkhax.curseforgegradle" version "1.1.15"
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 version = project.hasProperty('release') ? project.getProperty('release') : 'dev'
@@ -11,18 +10,23 @@ archivesBaseName = 'mclogs-forge'
 changelog = rootProject.file("CHANGELOG.md").text
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(11)
-sourceCompatibility = 11
-targetCompatibility = 11
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
 repositories {
     mavenCentral()
 }
 
+configurations {
+    include
+    implementation.extendsFrom(include)
+}
+
 dependencies {
     minecraft 'net.minecraftforge:forge:1.16.5-36.2.39'
 
-    implementation "gs.mclo:api:4.0.1"
+    include("gs.mclo:api:4.0.1") {
+        exclude group: 'com.google.code.gson', module: 'gson'
+    }
 }
 
 minecraft {
@@ -80,6 +84,7 @@ jar {
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
+    from configurations.include.collect { it.isDirectory() ? it : zipTree(it)}
 }
 jar.finalizedBy('reobfJar')
 
